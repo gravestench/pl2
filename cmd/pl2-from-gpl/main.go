@@ -9,15 +9,14 @@ import (
 	"log"
 	"os"
 
-	pl2 "github.com/OpenDiablo2/pl2/pkg"
+	"github.com/gravestench/gpl"
 
-	gpl "github.com/gravestench/gpl/pkg"
+	"github.com/gravestench/pl2"
 )
-
 
 type options struct {
 	gpl       *string
-	out    *string
+	out       *string
 	outPrefix *string
 }
 
@@ -29,7 +28,6 @@ func parseOptions(o *options) (terminate bool) {
 
 	return *o.gpl == "" || *o.out == ""
 }
-
 
 func main() {
 	o := &options{}
@@ -52,7 +50,7 @@ func main() {
 		return
 	}
 
-	pl2Bytes, err := pl2.EncodePalette(color.Palette(*gplPalette))
+	pl2Bytes, err := pl2.EncodePalette(color.Palette(gplPalette))
 	if err != nil {
 		fmt.Println(err)
 		return

@@ -10,7 +10,7 @@ import (
 	"os"
 	"path"
 
-	"github.com/OpenDiablo2/pl2/pkg"
+	"github.com/gravestench/pl2"
 )
 
 type options struct {
@@ -42,7 +42,7 @@ func main() {
 		return
 	}
 
-	pl2, err := pkg.FromBytes(data)
+	pl2, err := pl2.FromBytes(data)
 	if err != nil {
 		fmt.Print(fmt.Errorf("Error decoding pl2: %w\n", err))
 		return
@@ -63,7 +63,7 @@ func main() {
 	}
 }
 
-func makeImage(pl2 *pkg.PL2) image.Image {
+func makeImage(pl2 *pl2.PL2) image.Image {
 	const (
 		width = 256
 	)
@@ -84,19 +84,19 @@ func makeImage(pl2 *pkg.PL2) image.Image {
 	return img
 }
 
-func getMainTransforms(p *pkg.PL2) []pkg.Transform {
-	transforms := make([]pkg.Transform, 0)
+func getMainTransforms(p *pl2.PL2) []pl2.Transform {
+	transforms := make([]pl2.Transform, 0)
 
-	baseTransform := pkg.Transform{}
+	baseTransform := pl2.Transform{}
 	for idx := range baseTransform {
 		baseTransform[idx] = uint8(idx)
 	}
 
-	addTransform := func(t pkg.Transform) {
+	addTransform := func(t pl2.Transform) {
 		transforms = append(transforms, t)
 	}
 
-	addTransforms := func(transforms []pkg.Transform) {
+	addTransforms := func(transforms []pl2.Transform) {
 		for idx := range transforms {
 			addTransform(transforms[idx])
 		}
@@ -126,19 +126,19 @@ func getMainTransforms(p *pkg.PL2) []pkg.Transform {
 	return transforms
 }
 
-func getTextTransforms(p *pkg.PL2) []pkg.Transform {
-	transforms := make([]pkg.Transform, 0)
+func getTextTransforms(p *pl2.PL2) []pl2.Transform {
+	transforms := make([]pl2.Transform, 0)
 
-	baseTransform := pkg.Transform{}
+	baseTransform := pl2.Transform{}
 	for idx := range baseTransform {
 		baseTransform[idx] = uint8(idx)
 	}
 
-	addTransform := func(t pkg.Transform) {
+	addTransform := func(t pl2.Transform) {
 		transforms = append(transforms, t)
 	}
 
-	addTransforms := func(transforms []pkg.Transform) {
+	addTransforms := func(transforms []pl2.Transform) {
 		for idx := range transforms {
 			addTransform(transforms[idx])
 		}
@@ -150,7 +150,7 @@ func getTextTransforms(p *pkg.PL2) []pkg.Transform {
 	return transforms
 }
 
-func writeTransformAsRowInImage(y int, transform *pkg.Transform, pal color.Palette, img *image.RGBA) {
+func writeTransformAsRowInImage(y int, transform *pl2.Transform, pal color.Palette, img *image.RGBA) {
 	for x, palIdx := range transform {
 		if x > img.Bounds().Dx() {
 			continue

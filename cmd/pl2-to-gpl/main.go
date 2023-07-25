@@ -9,8 +9,9 @@ import (
 	"os"
 	"path/filepath"
 
-	pl2 "github.com/OpenDiablo2/pl2/pkg"
-	gpl "github.com/gravestench/gpl/pkg"
+	"github.com/gravestench/gpl"
+
+	"github.com/gravestench/pl2"
 )
 
 func main() {
@@ -41,18 +42,16 @@ func main() {
 	f = log.Writer()
 
 	if gplPath != "" {
-		ff, err := os.Create(gplPath)
-		if err != nil {
-			log.Fatal(err)
+		ff, errCreate := os.Create(gplPath)
+		if errCreate != nil {
+			log.Fatal(errCreate)
 		}
 
 		f = ff
 
-		close := func() {
+		defer func(ff *os.File) {
 			_ = ff.Close()
-		}
-
-		defer close()
+		}(ff)
 	}
 
 	gplPalette := gpl.FromPalette(p.BasePalette)
@@ -63,8 +62,8 @@ func main() {
 }
 
 type options struct {
-	pl2Path   *string
-	gplPath    *string
+	pl2Path *string
+	gplPath *string
 }
 
 func parseOptions(o *options) (terminate bool) {
