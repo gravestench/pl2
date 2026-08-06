@@ -27,6 +27,14 @@ several categories of "transformations" into the palette
 After the palette and transforms, **there is another palette and set of transformations**. 
 This second palette and set of transformations is intended to be used for bitmap fonts.
 
+## Command-line tools
+
+- `pl2-to-gpl` exports the base palette as a GIMP palette.
+- `pl2-from-gpl` generates a PL2 and its transformations from a GIMP palette.
+- `pl2-to-png` renders PL2 palette and transformation data as PNG.
+
+Install all tools with `go install ./cmd/...`. See [`cmd/README.md`](cmd/README.md) for flags and examples.
+
 ### More about the data structure
 In the following table, **a transform is 256 bytes**, each byte is an index that points to a color in the palette of the PL2.
 
@@ -45,5 +53,5 @@ In the following table, **a transform is 256 bytes**, each byte is an index that
 | Unknown(?) | 14 transforms |  |
 | Max Component blend | 256 transforms |  |
 | Darkened color shift | 1 transform |  |
-| Text color palette | `256 * 4` bytes | this is another color palette, but for text |
-| Text color shifts | 14 transforms | color-shifts used for text |
+| Text color palette | `13 * 3` bytes | this is another color palette, but for text |
+| Text color shifts | 13 transforms | color-shifts used for text |

@@ -3,7 +3,6 @@ package pkg
 import (
 	"bytes"
 	"image/color"
-	"io"
 	"math"
 
 	color2 "github.com/lucasb-eyer/go-colorful"
@@ -25,8 +24,12 @@ const (
 	unknownVariations    = 14
 	maxComponentBlends   = 256
 	textShifts           = 13
-	numOtherTransforms 	 = 5 // selected/darkened/r/g/b tones
-	NumTransforms = 1 + // lightLevelVariations +
+	encodedSize          = numPaletteColors*4 +
+		(lightLevelVariations+invColorVariations+1+alphaBlendCoarse*alphaBlendFine+
+			additiveBlends+multiplyBlends+hueVariations+3+unknownVariations+
+			maxComponentBlends+1+textShifts)*numPaletteColors + numTextColors*3
+	numOtherTransforms = 5   // selected/darkened/r/g/b tones
+	NumTransforms      = 1 + // lightLevelVariations +
 		invColorVariations +
 		(alphaBlendCoarse * alphaBlendFine) +
 		additiveBlends +
@@ -64,17 +67,17 @@ type PL2 struct {
 
 	LightLevelVariations []Transform
 	InvColorVariations   []Transform
-	SelectedUnitShift   Transform
-	AlphaBlend          [][]Transform
-	AdditiveBlend       []Transform
-	MultiplicativeBlend []Transform
-	HueVariations       []Transform
-	RedTones            Transform
-	GreenTones          Transform
-	BlueTones           Transform
-	UnknownVariations   []Transform
-	MaxComponentBlend   []Transform
-	DarkenedColorShift  Transform
+	SelectedUnitShift    Transform
+	AlphaBlend           [][]Transform
+	AdditiveBlend        []Transform
+	MultiplicativeBlend  []Transform
+	HueVariations        []Transform
+	RedTones             Transform
+	GreenTones           Transform
+	BlueTones            Transform
+	UnknownVariations    []Transform
+	MaxComponentBlend    []Transform
+	DarkenedColorShift   Transform
 
 	TextColors      color.Palette
 	TextColorShifts []Transform
@@ -84,7 +87,7 @@ type PL2 struct {
 
 // FromBytes reads the bytes into a struct
 func FromBytes(data []byte) (*PL2, error) {
-	return (&PL2{}).Decode(bytes.NewReader(data))
+	return (&PL2{}).Decode(data)
 }
 
 func ToBytes(pl2 *PL2) ([]byte, error) {
@@ -92,8 +95,8 @@ func ToBytes(pl2 *PL2) ([]byte, error) {
 }
 
 // Decode the stream into a PL2
-func Decode(rs io.ReadSeeker) (*PL2, error) {
-	return (&PL2{}).Decode(rs)
+func Decode(data []byte) (*PL2, error) {
+	return (&PL2{}).Decode(data)
 }
 
 // EncodePalette encodes the given palette as a PL2

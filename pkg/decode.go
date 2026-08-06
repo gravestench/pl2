@@ -3,14 +3,16 @@ package pkg
 import (
 	"fmt"
 	"image/color"
-	"io"
 	"math"
 
 	"github.com/gravestench/bitstream"
 )
 
-func (pl2 *PL2) Decode(rs io.ReadSeeker) (*PL2, error) {
-	stream := bitstream.NewReader(rs)
+func (pl2 *PL2) Decode(data []byte) (*PL2, error) {
+	if len(data) < encodedSize {
+		return nil, fmt.Errorf("PL2 data is truncated: got %d bytes, need %d", len(data), encodedSize)
+	}
+	stream := bitstream.ReaderFromBytes(data...)
 
 	if err := pl2.decodeBasePalette(stream); err != nil {
 		return nil, err
